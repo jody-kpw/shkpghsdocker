@@ -1,0 +1,26 @@
+mkdir -p ~/Projects/Docker/shkpghsdocker/original_bak/php/5.6/usr/local/etc/php
+docker cp shkp-ghs-php56:/usr/local/etc/php ~/Projects/Docker/shkpghsdocker/original_bak/php/5.6/usr/local/etc
+
+mkdir -p ~/Projects/Docker/shkpghsdocker/original_bak/php/7.0/usr/local/etc/php
+docker cp shkp-ghs-php70:/usr/local/etc/php ~/Projects/Docker/shkpghsdocker/original_bak/php/7.0/usr/local/etc
+
+mkdir -p ~/Projects/Docker/shkpghsdocker/original_bak/php/7.1/usr/local/etc/php
+docker cp shkp-ghs-php71:/usr/local/etc/php ~/Projects/Docker/shkpghsdocker/original_bak/php/7.1/usr/local/etc
+
+mkdir -p ~/Projects/Docker/shkpghsdocker/original_bak/mysql57/var/lib/mysql
+docker cp shkp-ghs-mysql57:/var/lib/mysql ~/Projects/Docker/shkpghsdocker/original_bak/mysql57/var/lib/
+
+
+# save Images
+docker save shkp-ghs-5.6-fpm  > ~/Projects/Docker/shkpghsdocker/images/shkp-ghs-5.6-fpm.tar
+
+docker save shkp-ghs-7.0-fpm  > ~/Projects/Docker/shkpghsdocker/images/shkp-ghs-7.0-fpm.tar
+
+docker save shkp-ghs-7.1-fpm  > ~/Projects/Docker/shkpghsdocker/images/shkp-ghs-7.1-fpm.tar
+
+
+
+# import the exported tar ball:
+docker load < ~/Projects/Docker/shkpghsdocker/images/shkp-ghs-5.6-fpm.tar
+docker load < ~/Projects/Docker/shkpghsdocker/images/shkp-ghs-7.0-fpm.tar
+docker load < ~/Projects/Docker/shkpghsdocker/images/shkp-ghs-7.1-fpm.tar

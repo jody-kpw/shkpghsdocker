@@ -1,0 +1,107 @@
+version: '2'
+
+services:
+    # SHKP general web hosting nginx
+    nginx:
+      image: nginx:latest
+      ports:
+          - "80:80"
+          - "443:443"
+      volumes:
+          - ./data/www:/www
+          - ./data/nginx/conf.d:/etc/nginx/conf.d
+      networks:
+          code-network:
+              ipv4_address: 172.28.1.1
+      container_name: shkp-ghs-nginx
+
+
+    # SHKP general web hosting php-fpm-5.6
+    php56:
+      image: shkp-ghs-5.6-fpm:latest
+      ports:
+          - "9056"
+      environment:
+          TZ: "UTC"
+      volumes:
+          - ./data/php/5.6/usr/local/etc/php:/usr/local/etc/php
+          - ./data/www:/www
+          # - ./data/test:/usr/local/etc/php
+      networks:
+          code-network:
+              ipv4_address: 172.28.1.2
+      container_name: shkp-ghs-php56
+
+
+    # SHKP general web hosting php-fpm-7.0
+    php70:
+      image: shkp-ghs-7.0-fpm:latest
+      ports:
+          - "9070"
+      volumes:
+          - ./data/www:/www
+          - ./data/php/7.0/usr/local/etc/php:/usr/local/etc/php
+      environment:
+          TZ: "UTC"
+      networks:
+          code-network:
+              ipv4_address: 172.28.1.3
+      container_name: shkp-ghs-php70
+
+
+    # SHKP general web hosting php-fpm-7.1
+    php71:
+      image: shkp-ghs-7.1-fpm:latest
+      ports:
+          - "9071"
+      volumes:
+          - ./data/www:/www
+          - ./data/php/7.1/usr/local/etc/php:/usr/local/etc/php
+      environment:
+          TZ: "UTC"
+      networks:
+          code-network:
+              ipv4_address: 172.28.1.4
+      container_name: shkp-ghs-php71
+
+
+    # SHKP general web hosting database
+    mysql57:
+      image: mysql:5.7
+      ports:
+        - "3306:3306"
+      env_file:
+          - ".env"
+      environment:
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      volumes:
+          - "./data/mysql/var/lib/mysql:/var/lib/mysql"
+      networks:
+          code-network:
+              ipv4_address: 172.28.1.7
+      container_name: shkp-ghs-mysql57
+
+
+    # SHKP phpmyadmin
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      links:
+        - mysql57:db
+      ports:
+        - "18080:80"
+      environment:
+        - PMA_USER=${MYSQL_ROOT_USER}
+        - PMA_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - PHP_UPLOAD_MAX_FILESIZE=100MB
+      networks:
+          code-network:
+              ipv4_address: 172.28.1.8
+      container_name: shkp-ghs-phpmyadmin
+networks:
+    code-network:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.28.1.0/16
